@@ -6,7 +6,11 @@ import './index.css';
 import AuthorQuiz from './AuthorQuiz';
 import * as serviceWorker from './serviceWorker';
 
+import {BrowserRouter, Route} from 'react-router-dom';
+
 import {shuffle, sample} from 'underscore';
+
+
 
 const authors = [
     {
@@ -65,8 +69,38 @@ function getTurnData(authors: any): {books: any, author: any} {
 }
 
 const state = {
-    turnData: getTurnData(authors)
+    turnData: getTurnData(authors),
+    highlight: ''
 };
 
-ReactDOM.render(<AuthorQuiz {...state}/>, document.getElementById('root'));
+function onAnswerSelected(answer) {
+    const isCorrect = state.turnData.author.books.some(book => book === answer);
+    state.highlight = isCorrect ? 'correct' : 'wrong';
+    render();
+}
+
+function AddAuthorForm({match}) {
+    return <div>
+        <h1>Add Author</h1>
+        <p>{JSON.stringify(match)}</p>
+    </div>
+}
+
+function App() {
+    return <AuthorQuiz {...state} onAnswerSelected={onAnswerSelected}/>;
+}
+
+function render() {
+    ReactDOM.render(
+        <BrowserRouter>
+            <React.Fragment>
+                <Route exact path="/" component={App} />
+                <Route path="/add" component={AddAuthorForm} />
+            </React.Fragment>
+        </BrowserRouter>
+        , document.getElementById('root')
+    );
+}
+
+render();
 serviceWorker.unregister();
