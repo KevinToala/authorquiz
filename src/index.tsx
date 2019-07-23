@@ -6,14 +6,12 @@ import './index.css';
 import AuthorQuiz from './AuthorQuiz';
 import * as serviceWorker from './serviceWorker';
 
-import {BrowserRouter, Route} from 'react-router-dom';
+import {BrowserRouter, Route, RouteComponentProps} from 'react-router-dom';
 
 import {shuffle, sample} from 'underscore';
 import AddAuthorForm from "./AddAuthorForm/AddAuthorForm";
 
-
-
-const authors = [
+const authors: {name: string, imageUrl: string, books: string[], imageSource?: string, imageAttribution?: string}[] = [
     {
         name: 'Mark Twain',
         imageUrl: 'images/authors/marktwain.jpg',
@@ -69,10 +67,14 @@ function getTurnData(authors: any): {books: any, author: any} {
     }
 }
 
-const state = {
-    turnData: getTurnData(authors),
-    highlight: ''
-};
+function resetState() {
+    return {
+        turnData: getTurnData(authors),
+        highlight: ''
+    };
+}
+
+let state = resetState();
 
 function onAnswerSelected(answer) {
     const isCorrect = state.turnData.author.books.some(book => book === answer);
@@ -81,7 +83,19 @@ function onAnswerSelected(answer) {
 }
 
 function App() {
-    return <AuthorQuiz {...state} onAnswerSelected={onAnswerSelected}/>;
+    return <AuthorQuiz {...state} onAnswerSelected={onAnswerSelected}
+                       onContinue={() => {
+                            state = resetState();
+                            render();
+                       }
+    }/>;
+}
+
+function AuthorWrapper(routeProps: RouteComponentProps) {
+    return <AddAuthorForm onAddAuthor={author => {
+        authors.push(author);
+        routeProps.history.push('/');
+    }} {...routeProps} />;
 }
 
 function render() {
@@ -89,7 +103,7 @@ function render() {
         <BrowserRouter>
             <React.Fragment>
                 <Route exact path="/" component={App} />
-                <Route path="/add" component={AddAuthorForm} />
+                <Route path="/add" component={AuthorWrapper} />
             </React.Fragment>
         </BrowserRouter>
         , document.getElementById('root')

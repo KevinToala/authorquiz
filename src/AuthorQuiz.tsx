@@ -13,16 +13,18 @@ interface AuthorQuizProps {
   };
   highlight: string;
   onAnswerSelected: (title) => void;
+  onContinue: () => void;
 }
 
 export default class AuthorQuiz extends Component<AuthorQuizProps> {
 
     render() {
-    return (
+        let highlight = this.props.highlight;
+        return (
         <div className="container-fluid">
           <Hero />
-          <Turn {...this.props.turnData} highlight={this.props.highlight} onAnswerSelected={this.props.onAnswerSelected}/>
-          <Continue />
+          <Turn {...this.props.turnData} highlight={highlight} onAnswerSelected={this.props.onAnswerSelected}/>
+          <Continue show={highlight === 'correct'} onContinue={this.props.onContinue} />
             <p> <Link to="/add"> Add an author</Link> </p>
           <Footer />
         </div>
