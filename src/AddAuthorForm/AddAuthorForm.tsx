@@ -1,6 +1,7 @@
 import React, {Component, SyntheticEvent} from 'react';
-import {RouteComponentProps} from "react-router";
+import {RouteComponentProps, withRouter} from "react-router";
 import './AddAuthorForm.css'
+import {connect} from "react-redux";
 
 
 interface AddAuthorFormProps extends RouteComponentProps {
@@ -14,7 +15,7 @@ interface AddAuthorFormState {
     bookTemp: string;
 }
 
-export default class AddAuthorForm extends Component<AddAuthorFormProps, AddAuthorFormState> {
+class AddAuthorForm extends Component<AddAuthorFormProps, AddAuthorFormState> {
 
     constructor(props) {
         super(props);
@@ -80,3 +81,14 @@ export default class AddAuthorForm extends Component<AddAuthorFormProps, AddAuth
         );
     }
 }
+
+function mapDispatchToProps(dispatch, props){
+    return {
+        onAddAuthor: author => {
+            dispatch({ type: 'ADD_AUTHOR', author });
+            props.history.push('/');
+        }
+    }
+}
+
+export default withRouter(connect(() => {}, mapDispatchToProps)(AddAuthorForm));

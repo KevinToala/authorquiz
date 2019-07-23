@@ -5,6 +5,7 @@ import Turn from "./Turn";
 import Continue from "./Continue";
 import Footer from "./Footer";
 import {Link} from "react-router-dom";
+import {connect} from "react-redux";
 
 interface AuthorQuizProps {
   turnData: {
@@ -16,7 +17,7 @@ interface AuthorQuizProps {
   onContinue: () => void;
 }
 
-export default class AuthorQuiz extends Component<AuthorQuizProps> {
+class AuthorQuiz extends Component<AuthorQuizProps> {
 
     render() {
         let highlight = this.props.highlight;
@@ -31,3 +32,23 @@ export default class AuthorQuiz extends Component<AuthorQuizProps> {
     );
   }
 }
+
+function mapStateToProps(state){
+    return {
+      turnData: state.turnData,
+      highlight: state.highlight
+    };
+}
+
+function mapDispatchToProps(dispatch){
+    return {
+        onAnswerSelected: answer => {
+            dispatch({ type: 'ANSWER_SELECTED', answer });
+        },
+        onContinue: () => {
+            dispatch({ type: 'CONTINUE'});
+        }
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(AuthorQuiz);
